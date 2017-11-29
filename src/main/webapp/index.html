@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+	<link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-combined.min.css">
+    <script src='assets/js/jquery.min.js'></script>
+    <script href="assets/js/bootstrap.min.js"></script>
+
+    <title></title>
+</head>
+
+<body>
+<nav class="navbar" style="background-color: #3c3f86;border-radius:0px!important;min-height:60px;">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" style="color:#ffffff;font-weight:bold;font-size:25px;" href="#">Customer Hierarchy</a>
+    </div>
+
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#" style="color:#ffffff;font-size:16px;font-family:arial!important;margin-top:5px;"><span class="glyphicon glyphicon-user"></span> Hello </a></li>      
+    </ul>
+  </div>
+</nav>
+<form class="form-inline">
+	<div class="container" class="form-group">	
+		<div class="form-group"> 
+			<label for="globalId" style="font-size: 1.3em;font-size: 18px;font-weight: bold;" class="control-label">Global Id :</label>
+			<input type="text" style="height: 2.5em;" class="form-control" id="global_Id" name="globalId" placeholder="Global Id">
+		</div>
+		
+		<div class="form-group"> 
+			<button type="button" class="btn btn-primary" id="submit_global_Id">Submit</button>
+		</div>	
+	
+	</div>
+    <div class="container" style="margin-top: 1em;">
+        <div id="a" class="tree well" style="border-radius: 14px!important;border: 1px solid #660099;background-color:#fff!important;">
+		
+		</div>
+	
+    </div>
+</form>
+
+	<div class="container">
+		<!-- <div>
+			<button type="button" class="btn btn-primary" id="showArea">Show/Hide</button>
+		</div> -->
+		<div id="displayArea" style="margin-top: 1em;">
+			<!-- <label for="jsonData" style="font-size: 18px;font-weight: bold;margin-top: 26px;">JSON:</label>
+			<textarea class="form-control" rows="5" style="border: 1px solid #660099;" columns="15" id="jsonData"></textarea> -->
+			
+			<input type='file' accept='text/plain' onchange='openFile(event)'>
+<!-- <br>
+<div id='output'>...</div> -->
+
+
+			
+			<button type="button" class="btn btn-success" id="saveData">Save</button>
+		</div>	
+	</div>
+	<div class="footer" style="text-align:center;color:white;background-color:#a29fbb;position:absolute;bottom:0;width:100%;font-size:18px;height:30px;padding-top:5px;">
+		@Copyright
+	</div>
+    <script type="text/javascript">
+
+
+	
+	   /*  $('#showArea').click(function() {
+            $('#displayArea').slideToggle("fast");
+        }); */
+        
+        var openFile = function (event) {
+            var input = event.target;
+            var reader = new FileReader();
+            console.log(reader);
+            reader.onload = function () {
+                var text = reader.result;
+                console.log(text);
+                var node = document.getElementById('output');
+                node.innerText = text;
+            };
+            reader.readAsText(input.files[0]);
+        };
+		
+		$('#saveData').click(function(){
+			var dataToSave = $('#jsonData').val();
+			console.log(dataToSave);		
+		})
+        $(function() {
+		
+		$("#submit_global_Id").click(function(){
+			var globalId = $("#global_Id").val();
+			if(globalId) {
+				$("#a").html('');
+			$.get('http://localhost:8080/global/'+globalId,
+				function(data) {
+				 objData(data, $("#a"));
+				})
+			} else {
+				alert("Please enter global Id and click submit.")
+			}
+		});
+
+            var title = "first";
+            function objData(datas, tag) {
+                var mainUL = $("<ul/>");
+                var address = false;
+                var isAddress = "address" in datas;
+                for (obj in datas) {
+                    var tempTitle;
+                    if (typeof(datas[obj]) == "object") {
+						var addrs;
+                        if (obj == "address") {
+                            var addrData = datas[obj];
+							console.log(datas.ean_count);
+							var cntryCd = datas.cntry_cd ? datas.cntry_cd : '';
+							addrs = $("<li><span> <img src='images/" + title + ".jpg'/> </span><a href='javascript:void(0);'> " + addrData.telephone + " | " + addrData.address + ", " + addrData.city + ", " + addrData.country + ", " + addrData.state + ", " + addrData.postal +" | " + datas.ean_count+ " | "+ cntryCd +"</a></li>");
+                            mainUL.html(addrs);
+							address = true;
+                        } else {
+                            tempTitle = obj;
+                            var data = datas[obj];
+                        }
+
+
+                        if (data && address || data && !isAddress) {
+                        	var cntryCd1 = datas.cntry_cd ? datas.cntry_cd : '';
+                            if (isAddress) {
+                                addrs = $("<li><span> <img src='images/" + title + ".jpg'/> </span><a href='javascript:void(0);'> " + addrData.telephone + " | " + addrData.address + ", " + addrData.city + ", " + addrData.country + ", " + addrData.state + ", " + addrData.postal +" | " + datas.ean_count+ " | "+ cntryCd1 + "</a></li>");
+                            } else {
+                                addrs = $("<li><span> <img src='images/" + title + ".jpg'/></span> " + title.toUpperCase() +" | "+ datas.ean_count+ " | " + cntryCd1 +" </li>");
+                            }
+                            mainUL.html(addrs);
+                            title = tempTitle;
+                            objData(data, addrs);
+                        }
+                        tag.append(mainUL);
+                    }
+                }
+            }
+            
+			
+			
+            $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+            $('.tree li.parent_li > span').on('click', function(e) {
+                var children = $(this).parent('li.parent_li').find(' > ul > li');
+                if (children.is(":visible")) {
+                    children.hide('fast');
+                    $(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
+                } else {
+                    children.show('fast');
+                    $(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
+                }
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+
+</html>

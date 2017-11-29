@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface GlobalServiceCustom {
 
 
-    Global getById(int id);
+    Global getById(String id);
     Global save(Global global);
  //   Product saveOrUpdateProductForm(ProductForm productForm);
 }

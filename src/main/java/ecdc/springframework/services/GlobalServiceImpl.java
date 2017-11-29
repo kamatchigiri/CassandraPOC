@@ -32,7 +32,7 @@ public class GlobalServiceImpl implements GlobalServiceCustom {
 
 
     @Override
-    public Global getById(int id) {
+    public Global getById(String id) {
         return repository.getById(id);
     }
 

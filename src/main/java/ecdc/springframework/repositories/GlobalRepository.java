@@ -12,6 +12,6 @@ import java.util.UUID;
  */
 public interface GlobalRepository extends CrudRepository<Global, Integer> {
 	
-   public Global getById(int id);
+   public Global getById(String id);
   //  Global saveOrUpdate(Global global);
 }

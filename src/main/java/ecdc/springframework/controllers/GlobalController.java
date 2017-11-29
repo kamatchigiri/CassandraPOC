@@ -43,14 +43,14 @@ public class GlobalController {
     }*/
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Global getGlobal(@PathVariable int id){
+    public Global getGlobal(@PathVariable String id){
     	return globalService.getById(id);
 /*        model.addAttribute("product", globalService.getById(UUID.fromString(id)));
         return "global/show";*/
     }
 
     @RequestMapping("global/edit/{id}")
-    public int edit(@PathVariable int id, Model model){
+    public String edit(@PathVariable String id, Model model){
         Global global = globalService.getById(id);
         return global.getId();
        /* ProductForm productForm = productToProductForm.convert(product);

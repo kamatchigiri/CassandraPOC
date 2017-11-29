@@ -87,17 +87,17 @@ public class GlobalRepositoryTest {
 		// global.setId(100);
 		global.setAddress(add);
 		global.setName("Narm");
-		global.setId(1005);
+		global.setId("1003");
 		global.setDivision(div);
 		global.setEan_count(count);
 
 		// when
 		globalRepository.save(global);
 
-		Global g1 = globalRepository.getById(825241653);
+		Global g1 = globalRepository.getById("1002");
 		//System.out.println("G1:::::::::::::::::::" + g1.getId() + g1.getName()+ g1.getAddress());
 
 		// then
-		Assert.assertNotNull(globalRepository.getById(825241653));
+		Assert.assertNotNull(globalRepository.getById("1002"));
     }
 }
